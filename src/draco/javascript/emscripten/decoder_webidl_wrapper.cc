@@ -40,6 +40,15 @@ long MetadataQuerier::GetIntEntry(const Metadata &metadata,
   return value;
 }
 
+void MetadataQuerier::GetIntEntryArray(const draco::Metadata &metadata,
+                                       const char *entry_name,
+                                       DracoInt32Array *out_values) const {
+  const std::string name(entry_name);
+  std::vector<int32_t> values;
+  metadata.GetEntryIntArray(name, &values);
+  out_values->SetValues(values.data(), values.size());
+}
+
 double MetadataQuerier::GetDoubleEntry(const Metadata &metadata,
                                        const char *entry_name) const {
   double value = 0;
@@ -51,8 +60,7 @@ double MetadataQuerier::GetDoubleEntry(const Metadata &metadata,
 const char *MetadataQuerier::GetStringEntry(const Metadata &metadata,
                                             const char *entry_name) {
   const std::string name(entry_name);
-  if (!metadata.GetEntryString(name, &last_string_returned_))
-    return nullptr;
+  if (!metadata.GetEntryString(name, &last_string_returned_)) return nullptr;
 
   const char *value = last_string_returned_.c_str();
   return value;
@@ -72,8 +80,7 @@ const char *MetadataQuerier::GetEntryName(const Metadata &metadata,
       entry_names_.push_back(entry.first);
     }
   }
-  if (entry_id < 0 || entry_id >= entry_names_.size())
-    return nullptr;
+  if (entry_id < 0 || entry_id >= entry_names_.size()) return nullptr;
   return entry_names_[entry_id].c_str();
 }
 
@@ -236,8 +243,7 @@ bool Decoder::GetAttributeFloatForAllPoints(const PointCloud &pc,
   out_values->SetValues(nullptr, num_entries);
   for (draco::PointIndex i(0); i < num_points; ++i) {
     const draco::AttributeValueIndex val_index = pa.mapped_index(i);
-    if (!pa.ConvertValue<float>(val_index, values))
-      return false;
+    if (!pa.ConvertValue<float>(val_index, values)) return false;
     for (int j = 0; j < components; ++j) {
       out_values->SetValue(entry_id++, values[j]);
     }
@@ -298,9 +304,6 @@ void Decoder::SkipAttributeTransform(draco_GeometryAttribute_Type att_type) {
 }
 
 const Metadata *Decoder::GetMetadata(const PointCloud &pc) const {
-  if (!pc.GetMetadata()) {
-    return nullptr;
-  }
   return pc.GetMetadata();
 }
 
