@@ -136,6 +136,20 @@ THREE.DRACOLoader.prototype = {
         console.error(errorMsg);
         throw new Error(errorMsg);
       }
+
+      var mesh = new dracoDecoder.Mesh();
+      decoder.DecodeBufferToMesh(buffer, mesh);
+      var attrId = decoder.GetAttributeIdByMetadataEntry(mesh, "i3s-attribute-type", "feature-index");
+      var meta = decoder.GetAttributeMetadata(mesh, attrId);
+      var metadataQ = new dracoDecoder.MetadataQuerier();
+      var featureIds = new dracoDecoder.DracoInt32Array();
+      metadataQ.GetIntEntryArray(meta, "i3s-feature-ids", featureIds);
+      // std::vector<int32_t> fids;
+      // meta->GetEntryIntArray("i3s-feature-ids", &fids);
+      // std::cout << fids.size() << ": " << fids[0] << std::endl;
+
+      console.log(featureIds.size(),":", featureIds.GetValue(0));
+      
       callback(this.convertDracoGeometryTo3JS(dracoDecoder, decoder,
           geometryType, buffer, attributeUniqueIdMap, attributeTypeMap));
     },

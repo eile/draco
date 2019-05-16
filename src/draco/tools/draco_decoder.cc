@@ -106,6 +106,16 @@ int main(int argc, char **argv) {
       return ReturnError(statusor.status());
     }
     std::unique_ptr<draco::Mesh> in_mesh = std::move(statusor).value();
+
+    const auto attrId = in_mesh->GetAttributeIdByMetadataEntry(
+        "i3s-attribute-type", "feature-index");
+    const auto attr = in_mesh->GetAttributeByUniqueId(attrId);
+    auto meta = in_mesh->GetMetadata()->GetAttributeMetadataByUniqueId(
+        attr->unique_id());
+    std::vector<int32_t> fids;
+    meta->GetEntryIntArray("i3s-feature-ids", &fids);
+    std::cout << fids.size() << ": " << fids[0] << std::endl;
+
     timer.Stop();
     if (in_mesh) {
       mesh = in_mesh.get();

@@ -35,6 +35,7 @@
 
       // Configure decoder and create loader.
       THREE.DRACOLoader.setDecoderPath( '../' );
+      THREE.DRACOLoader.setDecoderConfig( { type: 'js' } );
       var dracoLoader = new THREE.DRACOLoader();
 
       // (Optional) Pre-fetch decoder source files.
