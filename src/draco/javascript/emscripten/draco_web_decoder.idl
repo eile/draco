@@ -117,42 +117,49 @@ interface DracoFloat32Array {
   void DracoFloat32Array();
   float GetValue(long index);
   long size();
+  boolean GetArray(VoidPtr out_values, long out_size);
 };
 
 interface DracoInt8Array {
   void DracoInt8Array();
   byte GetValue(long index);
   long size();
+  boolean GetArray(VoidPtr out_values, long out_size);
 };
 
 interface DracoUInt8Array {
   void DracoUInt8Array();
   octet GetValue(long index);
   long size();
+  boolean GetArray(VoidPtr out_values, long out_size);
 };
 
 interface DracoInt16Array {
   void DracoInt16Array();
   short GetValue(long index);
   long size();
+  boolean GetArray(VoidPtr out_values, long out_size);
 };
 
 interface DracoUInt16Array {
   void DracoUInt16Array();
   unsigned short GetValue(long index);
   long size();
+  boolean GetArray(VoidPtr out_values, long out_size);
 };
 
 interface DracoInt32Array {
   void DracoInt32Array();
   long GetValue(long index);
   long size();
+  boolean GetArray(VoidPtr out_values, long out_size);
 };
 
 interface DracoUInt32Array {
   void DracoUInt32Array();
   unsigned long GetValue(long index);
   long size();
+  boolean GetArray(VoidPtr out_values, long out_size);
 };
 
 interface MetadataQuerier {
@@ -201,6 +208,11 @@ interface Decoder {
                           DracoInt32Array out_values);
   long GetTriangleStripsFromMesh([Ref, Const] Mesh m,
                                  DracoInt32Array strip_values);
+
+  boolean GetTrianglesUInt16Array([Ref, Const] Mesh m,
+                                  VoidPtr out_values, long out_size);
+  boolean GetTrianglesUInt32Array([Ref, Const] Mesh m,
+                                  VoidPtr out_values, long out_size);
 
   boolean GetAttributeFloat([Ref, Const] PointAttribute pa,
                             long att_index,

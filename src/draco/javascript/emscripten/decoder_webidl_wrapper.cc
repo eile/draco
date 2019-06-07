@@ -152,6 +152,41 @@ long Decoder::GetTriangleStripsFromMesh(const Mesh &m,
   return stripifier.num_strips();
 }
 
+template <typename T>
+bool GetTrianglesArray(const draco::Mesh &m, T *out_values,
+                       const int out_size) {
+  const uint32_t num_faces = m.num_faces();
+  if (num_faces * 3 != out_size) {
+    return false;
+  }
+
+  for (uint32_t face_id = 0; face_id < num_faces; ++face_id) {
+    const Mesh::Face &face = m.face(draco::FaceIndex(face_id));
+    if (face.size() != 3 || face[0].value() > std::numeric_limits<T>::max() ||
+        face[1].value() > std::numeric_limits<T>::max() ||
+        face[2].value() > std::numeric_limits<T>::max()) {
+      return false;
+    }
+
+    out_values[face_id * 3 + 0] = static_cast<T>(face[0].value());
+    out_values[face_id * 3 + 1] = static_cast<T>(face[1].value());
+    out_values[face_id * 3 + 2] = static_cast<T>(face[2].value());
+  }
+  return true;
+}
+
+bool Decoder::GetTrianglesUInt16Array(const draco::Mesh &m, void *out_values,
+                                      const int out_size) {
+  return GetTrianglesArray<uint16_t>(
+      m, reinterpret_cast<uint16_t *>(out_values), out_size);
+}
+
+bool Decoder::GetTrianglesUInt32Array(const draco::Mesh &m, void *out_values,
+                                      const int out_size) {
+  return GetTrianglesArray<uint32_t>(
+      m, reinterpret_cast<uint32_t *>(out_values), out_size);
+}
+
 bool Decoder::GetAttributeFloat(const PointAttribute &pa,
                                 draco::AttributeValueIndex::ValueType val_index,
                                 DracoFloat32Array *out_values) {

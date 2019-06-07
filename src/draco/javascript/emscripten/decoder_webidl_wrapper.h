@@ -48,6 +48,12 @@ class DracoArray {
 
   int size() const { return values_.size(); }
 
+  bool GetArray(void *out_values, const int out_size) {
+    if (out_size != values_.size()) return false;
+    ::memcpy(out_values, values_.data(), out_size * sizeof(T));
+    return true;
+  }
+
  private:
   std::vector<T> values_;
 };
@@ -147,6 +153,14 @@ class Decoder {
   static long GetTriangleStripsFromMesh(const draco::Mesh &m,
                                         DracoInt32Array *strip_values);
 
+  // Returns all faces as triangles. Fails if there are non-triangle faces,
+  // indices exceed the data range (in particular for uint16), or the
+  // output array size does not match
+  static bool GetTrianglesUInt16Array(const draco::Mesh &m, void *out_values,
+                                      int out_size);
+  static bool GetTrianglesUInt32Array(const draco::Mesh &m, void *out_values,
+                                      int out_size);
+
   // Returns float attribute values in |out_values| from |entry_index| index.
   static bool GetAttributeFloat(
       const draco::PointAttribute &pa,
@@ -163,7 +177,7 @@ class Decoder {
   // I.e., the |out_values| is going to contain m.num_points() entries.
   static bool GetAttributeFloatArrayForAllPoints(
       const draco::PointCloud &pc, const draco::PointAttribute &pa,
-      void *out_values, const int out_size);
+      void *out_values, int out_size);
 
   // Returns int8_t attribute values for all point ids of the point cloud.
   // I.e., the |out_values| is going to contain m.num_points() entries.
@@ -181,7 +195,7 @@ class Decoder {
   // I.e., the |out_values| is going to contain m.num_points() entries.
   static bool GetAttributeUInt8ArrayForAllPoints(
       const draco::PointCloud &pc, const draco::PointAttribute &pa,
-      void *out_values, const int out_size);
+      void *out_values, int out_size);
 
   // Returns int16_t attribute values for all point ids of the point cloud.
   // I.e., the |out_values| is going to contain m.num_points() entries.
@@ -199,7 +213,7 @@ class Decoder {
   // I.e., the |out_values| is going to contain m.num_points() entries.
   static bool GetAttributeUInt16ArrayForAllPoints(
       const draco::PointCloud &pc, const draco::PointAttribute &pa,
-      void *out_values, const int out_size);
+      void *out_values, int out_size);
 
   // Returns int32_t attribute values for all point ids of the point cloud.
   // I.e., the |out_values| is going to contain m.num_points() entries.
@@ -222,7 +236,7 @@ class Decoder {
   // I.e., the |out_values| is going to contain m.num_points() entries.
   static bool GetAttributeUInt32ArrayForAllPoints(
       const draco::PointCloud &pc, const draco::PointAttribute &pa,
-      void *out_values, const int out_size);
+      void *out_values, int out_size);
 
   // Tells the decoder to skip an attribute transform (e.g. dequantization) for
   // an attribute of a given type.
